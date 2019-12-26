@@ -18,4 +18,4 @@ npm run start
 npm run build
 ```
 
-把 `./build/` 下的文件复制到后端的 TODO 目录
+把 `./build/` 下的文件复制到后端

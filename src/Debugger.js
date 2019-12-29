@@ -1,5 +1,6 @@
-import React, { } from 'react';
-import { Popover, Button, Typography } from 'antd';
+import React, { } from 'react'
+import { Popover, Button, Typography } from 'antd'
+
 function DebuggerMenu() {
 	return <div style={{ width: '400px', maxWidth: '80vw' }}>
 		<div style={{

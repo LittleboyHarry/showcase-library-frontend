@@ -9,7 +9,7 @@ const defaultParam = {
 }
 
 function resultReducer(oldState, result) {
-	switch (result.prototype) {
+	switch (result.constructor) {
 		case SuccessResult:
 			return {
 				loading: false,
@@ -36,26 +36,44 @@ const useCodeBlockStyle = makeStyles({
 	}
 })
 
-function SuccessResult(data) {
-	this.prototype = SuccessResult
-	this.data = data
+class SuccessResult {
+	constructor(data) {
+		this.prototype = SuccessResult;
+		this.data = data;
+	}
 }
 
-function FailureResult(defaultData) {
-	this.prototype = FailureResult
-	this.data = defaultData
+class FailureResult {
+	constructor(initialData) {
+		this.prototype = FailureResult;
+		this.data = initialData;
+	}
 }
 
 const mockLoadingIcon = <Icon type="loading" style={{ color: '#108ee9' }} />
 const placement = 'bottomRight'
 
-function useMockableJsonFetch(name, param, defaultData = null, mock = null) {
+function HandleMockButtonGroup({ onLogout, onPass, onIntercept }) {
+	return <>
+		<Button style={{ marginRight: '3rem' }}
+			type="link" size="small" onClick={onLogout}>
+			输出数据</Button>
+		<Button style={{ marginRight: '1rem' }}
+			type="primary" size="small" onClick={onPass}>
+			通过</Button>
+		<Button
+			type="danger" size="small" onClick={onIntercept}>
+			拦截</Button>
+	</>
+}
+
+function useMockableJsonFetch(name, param, initialData = null, mockData = null) {
 	const { url, method, body } = { ...defaultParam, ...param }
 
-	const [state, dispatch] = useReducer(resultReducer, {
+	const [result, dispatch] = useReducer(resultReducer, {
 		loading: true,
 		success: false,
-		data: defaultData
+		data: initialData
 	})
 
 	const codeBlockStyle = useCodeBlockStyle()
@@ -64,28 +82,25 @@ function useMockableJsonFetch(name, param, defaultData = null, mock = null) {
 		const startTimestamp = new Date()
 		if (useMockableJsonFetch.enableMock) {
 			const key = `request-${name}-${startTimestamp}-${Math.random()}`
-			notification.open({
-				message: `模拟请求 - ${name}`,
-				description: '',
-				icon: mockLoadingIcon,
-				key,
-				placement,
-				btn:
-					<>
-						<Button style={{ marginRight: '1rem' }}
-							type="primary" size="small" onClick={() => {
-								notification.close(key)
-								dispatch(new SuccessResult(mock))
-							}}>
-							通过</Button>
-						<Button
-							type="danger" size="small" onClick={() => {
-								notification.close(key)
-								dispatch(new FailureResult(defaultData))
-							}}>
-							拦截</Button>
-					</>,
-				duration: 0,
+			setTimeout(() => {
+				notification.open({
+					message: `模拟请求 - ${name}`,
+					description: `URL: ${url}`,
+					icon: mockLoadingIcon,
+					key,
+					placement,
+					btn: <HandleMockButtonGroup
+						onLogout={() => { console.log(body) }}
+						onPass={() => {
+							notification.close(key)
+							dispatch(new SuccessResult(mockData))
+						}}
+						onIntercept={() => {
+							notification.close(key)
+							dispatch(new FailureResult(initialData))
+						}} />,
+					duration: 0,
+				})
 			})
 		} else {
 			try {
@@ -106,12 +121,12 @@ function useMockableJsonFetch(name, param, defaultData = null, mock = null) {
 						</div>),
 					duration: 0
 				})
-				dispatch(new FailureResult(defaultData))
+				dispatch(new FailureResult(initialData))
 			}
 		}
-	}, [body, mock])
+	}, [body])
 
-	return state
+	return result
 }
 
 useMockableJsonFetch.enableMock = false;

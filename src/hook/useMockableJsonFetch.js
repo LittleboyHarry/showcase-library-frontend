@@ -1,6 +1,6 @@
 import React, { useReducer } from 'react'
 import { useAsync } from 'react-use'
-import { notification, Button, Dropdown, Icon, Menu, Typography } from 'antd'
+import { notification, Button, Dropdown, Icon, Menu } from 'antd'
 import { makeStyles } from '@material-ui/styles';
 import { limitConnection } from '../Config'
 

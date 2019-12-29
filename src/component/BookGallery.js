@@ -4,7 +4,8 @@ import { Card, Typography, Skeleton, Button, Result, Empty, List } from 'antd';
 import * as MockData from '../MockData'
 import { makeStyles } from '@material-ui/styles'
 import App from '../App'
-import { BrowseBookEvent } from '../event'
+import { PageSegueEvent } from '../event'
+import { PageKeys } from '../page'
 
 const useStyles = makeStyles({
 	root: {
@@ -43,7 +44,15 @@ export default function BookGallery({ disabled = false }) {
 									<Card
 										type="inner"
 										style={{ cursor: 'pointer' }}
-										onClick={() => { dispatch(new BrowseBookEvent(index)) }}
+										onClick={() => {
+											dispatch(new PageSegueEvent({
+												target: PageKeys.BOOK,
+												data: {
+													bookId: index,
+													bookName: book.name
+												}
+											}))
+										}}
 										title={
 											<span title={book.name}>{book.name}</span>}
 									>

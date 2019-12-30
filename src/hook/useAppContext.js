@@ -1,6 +1,6 @@
 import { useContext } from 'react'
-import App from '../App'
+import AppContext from '../AppContext'
 
 export default function useAppContext() {
-	return useContext(App.Context)
+	return useContext(AppContext)
 }

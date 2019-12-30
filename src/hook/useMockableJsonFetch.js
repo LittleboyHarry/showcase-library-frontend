@@ -68,11 +68,14 @@ const placement = 'bottomRight'
 
 function HandleMockButtonGroup({ name, notificationKey: key, body, mockData, defaultData, onFinish, dispatch }) {
 	const printButton = <Button
-		style={{ marginRight: '2rem' }}
+		style={{
+			marginRight: '2rem',
+			justifySelf: 'start'
+		}}
 		type="link"
 		size="small"
 		onClick={() => { console.log(body) }}>
-		请求数据
+		输出请求数据
 	</Button>
 
 	const passAllMenu = <Menu onClick={() => {
@@ -122,11 +125,11 @@ function HandleMockButtonGroup({ name, notificationKey: key, body, mockData, def
 		overlay={denyAllMenu}>
 		拦截</Dropdown.Button>
 
-	return <>
+	return <div style={{ display: 'flex' }}>
 		{printButton}
 		{passButton}
 		{denyButton}
-	</>
+	</div>
 }
 
 const mockWhitelist = new Set()
@@ -134,7 +137,7 @@ const mockBlacklist = new Set()
 
 let countOfOpeningFetch = 0;
 
-function useMockableJsonFetch({ name, url, method = 'get', body, defaultData, mockData, onFinish, blocked }, dependency) {
+function useMockableJsonFetch({ name, url, method = 'GET', body, defaultData, mockData, onFinish, blocked }, dependency) {
 
 	const [result, dispatch] = useReducer(resultReducer, {
 		loading: true,
@@ -164,7 +167,7 @@ function useMockableJsonFetch({ name, url, method = 'get', body, defaultData, mo
 				setTimeout(() => {
 					notification.open({
 						message: `模拟请求 - ${name}`,
-						description: `URL: ${url}`,
+						description: `URL: ${url} Method: ${method}`,
 						icon: mockLoadingIcon,
 						key,
 						placement,
